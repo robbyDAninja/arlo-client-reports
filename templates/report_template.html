@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>__TITLE_HTML__</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #111315;
+      --panel: #1b1f22;
+      --panel-border: #30363b;
+      --text: #f3f5f6;
+      --muted: #aeb7bd;
+      --accent: #66d9c6;
+      --accent-hover: #7ee3d2;
+      --error: #ff8a8a;
+      --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(102, 217, 198, 0.09), transparent 34rem),
+        var(--bg);
+      color: var(--text);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    .gate-shell {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
+
+    .gate-card {
+      width: min(100%, 28rem);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 2rem;
+    }
+
+    h1 {
+      margin: 0 0 1.5rem;
+      font-size: clamp(1.55rem, 4vw, 2rem);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    form {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    label {
+      display: grid;
+      gap: 0.45rem;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      border: 1px solid var(--panel-border);
+      border-radius: 6px;
+      background: #111517;
+      color: var(--text);
+      font: inherit;
+      padding: 0.8rem 0.85rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(102, 217, 198, 0.18);
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #07110f;
+      cursor: pointer;
+      font: 700 1rem/1 ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      padding: 0.9rem 1rem;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    .error {
+      min-height: 1.5rem;
+      color: var(--error);
+      font-size: 0.95rem;
+    }
+
+    .report {
+      display: none;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 1.25rem 5rem;
+    }
+
+    .report.active {
+      display: block;
+    }
+
+    .report :where(h1, h2, h3) {
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .report a {
+      color: var(--accent-hover);
+    }
+
+    .report code {
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 4px;
+      padding: 0.12rem 0.3rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="gate-shell" id="gate">
+      <div class="gate-card">
+        <h1>__TITLE_HTML__</h1>
+        <form id="unlock-form" autocomplete="off">
+          <label>
+            Password
+            <input id="password" type="password" autocomplete="current-password" required autofocus>
+          </label>
+          <button id="unlock-button" type="submit">Unlock report</button>
+          <div class="error" id="error" role="alert" aria-live="polite"></div>
+        </form>
+      </div>
+    </section>
+    <article class="report" id="report" aria-live="polite"></article>
+  </main>
+
+  <script>
+    const REPORT_TITLE = __TITLE_JSON__;
+    const SALT_B64 = "__SALT_B64__";
+    const IV_B64 = "__IV_B64__";
+    const CIPHERTEXT_B64 = "__CIPHERTEXT_B64__";
+    const PBKDF2_ITERATIONS = 200000;
+
+    const form = document.getElementById("unlock-form");
+    const passwordInput = document.getElementById("password");
+    const unlockButton = document.getElementById("unlock-button");
+    const error = document.getElementById("error");
+    const gate = document.getElementById("gate");
+    const report = document.getElementById("report");
+
+    function b64ToBytes(value) {
+      const binary = atob(value);
+      const bytes = new Uint8Array(binary.length);
+      for (let index = 0; index < binary.length; index += 1) {
+        bytes[index] = binary.charCodeAt(index);
+      }
+      return bytes;
+    }
+
+    async function deriveKey(password, salt) {
+      const encoder = new TextEncoder();
+      const passwordKey = await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(password),
+        "PBKDF2",
+        false,
+        ["deriveKey"]
+      );
+
+      return crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt,
+          iterations: PBKDF2_ITERATIONS,
+          hash: "SHA-256"
+        },
+        passwordKey,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["decrypt"]
+      );
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      error.textContent = "";
+      unlockButton.disabled = true;
+
+      try {
+        const salt = b64ToBytes(SALT_B64);
+        const iv = b64ToBytes(IV_B64);
+        const ciphertext = b64ToBytes(CIPHERTEXT_B64);
+        const key = await deriveKey(passwordInput.value, salt);
+        const plaintext = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv },
+          key,
+          ciphertext
+        );
+
+        const decoder = new TextDecoder();
+        report.innerHTML = decoder.decode(plaintext);
+        document.title = REPORT_TITLE;
+        gate.remove();
+        report.classList.add("active");
+      } catch {
+        report.innerHTML = "";
+        error.textContent = "Incorrect password";
+        passwordInput.select();
+      } finally {
+        unlockButton.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>
