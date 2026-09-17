@@ -139,31 +139,302 @@
 
     .report {
       display: none;
-      max-width: 760px;
+      width: min(100% - 2rem, 960px);
       margin: 0 auto;
-      padding: 3rem 1.25rem 5rem;
-      color: var(--color-bn-paper);
+      padding: 3rem 0 5rem;
+      color: var(--color-bn-ink);
     }
 
     .report.active {
       display: block;
     }
 
-    .report :where(h1, h2, h3) {
-      color: #ffffff;
+    .report-shell {
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid rgba(225, 252, 255, 0.52);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .report-top-rule {
+      height: 5px;
+      background: linear-gradient(90deg, var(--color-bn-bright), var(--color-bn-signal), var(--color-bn-medium));
+    }
+
+    .report-header {
+      display: grid;
+      gap: 1.35rem;
+      padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 5vw, 3rem) 1.5rem;
+      border-bottom: 1px solid rgba(0, 71, 84, 0.12);
+      background:
+        linear-gradient(180deg, rgba(225, 252, 255, 0.6), rgba(255, 255, 255, 0) 72%),
+        #ffffff;
+    }
+
+    .report-brand {
+      display: inline-grid;
+      place-items: center;
+      justify-self: start;
+      width: 132px;
+      min-height: 38px;
+      padding: 0.55rem 0.7rem;
+      background: var(--color-bn-deep);
+      border-radius: 6px;
+    }
+
+    .report-brand .brand-logo {
+      width: 100%;
+    }
+
+    .report-title-block {
+      display: grid;
+      gap: 0.45rem;
+      max-width: 46rem;
+    }
+
+    .report-title {
+      margin: 0;
+      color: var(--color-bn-deep);
       font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3.2rem);
       line-height: 1.2;
       letter-spacing: 0;
     }
 
+    .report-meta {
+      margin: 0;
+      color: rgba(20, 39, 43, 0.62);
+      font-size: 0.96rem;
+      font-weight: 650;
+    }
+
+    .report-body {
+      padding: clamp(1.5rem, 5vw, 3rem);
+      background: var(--color-bn-paper);
+    }
+
+    .report-body > * {
+      max-width: 44rem;
+    }
+
+    .report-body > :first-child {
+      margin-top: 0;
+    }
+
+    .report-body > :last-child {
+      margin-bottom: 0;
+    }
+
+    .report :where(h1, h2, h3) {
+      color: var(--color-bn-deep);
+      font-family: var(--font-heading);
+      line-height: 1.18;
+      letter-spacing: 0;
+    }
+
+    .report h1 {
+      margin: 0 0 1.35rem;
+      font-size: clamp(1.75rem, 4vw, 2.45rem);
+    }
+
+    .report h2 {
+      position: relative;
+      margin: 2.6rem 0 1rem;
+      padding-bottom: 0.7rem;
+      font-size: clamp(1.45rem, 3vw, 2rem);
+      border-bottom: 1px solid rgba(0, 71, 84, 0.16);
+    }
+
+    .report h2::after {
+      content: "";
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 4.5rem;
+      height: 3px;
+      background: var(--color-bn-bright);
+      border-radius: 999px;
+    }
+
+    .report h3 {
+      margin: 2rem 0 0.75rem;
+      font-size: 1.25rem;
+    }
+
+    .report p {
+      margin: 0 0 1.15rem;
+      color: rgba(20, 39, 43, 0.86);
+      font-size: 1.02rem;
+      line-height: 1.72;
+    }
+
+    .report h2:first-child + p {
+      max-width: 46rem;
+      margin-bottom: 1.7rem;
+      padding: 1rem 1.15rem;
+      border-left: 4px solid var(--color-bn-bright);
+      background: rgba(225, 252, 255, 0.62);
+      color: var(--color-bn-ink);
+      font-size: 1.08rem;
+      line-height: 1.68;
+    }
+
     .report a {
-      color: var(--color-bn-light);
+      color: var(--color-bn-medium);
+      font-weight: 650;
+      text-decoration-color: rgba(13, 183, 214, 0.42);
+      text-underline-offset: 0.16em;
     }
 
     .report code {
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(0, 71, 84, 0.08);
       border-radius: 4px;
       padding: 0.12rem 0.3rem;
+    }
+
+    .report ul,
+    .report ol {
+      display: grid;
+      gap: 0.65rem;
+      margin: 0 0 1.4rem;
+      padding-left: 1.35rem;
+      color: rgba(20, 39, 43, 0.86);
+      line-height: 1.62;
+    }
+
+    .report li::marker {
+      color: var(--color-bn-medium);
+      font-weight: 800;
+    }
+
+    .report ul li::marker {
+      content: "\25A0  ";
+      font-size: 0.72em;
+    }
+
+    .report table {
+      display: block;
+      max-width: 100%;
+      margin: 1.25rem 0 2rem;
+      overflow-x: auto;
+      border: 1px solid rgba(0, 71, 84, 0.12);
+      border-radius: 8px;
+      border-spacing: 0;
+      background: #ffffff;
+      box-shadow: 0 12px 28px rgba(0, 71, 84, 0.08);
+    }
+
+    .report tbody {
+      display: table;
+      width: 100%;
+      min-width: 620px;
+      border-collapse: collapse;
+    }
+
+    .report th,
+    .report td {
+      padding: 0.82rem 1rem;
+      border: 0;
+      border-bottom: 1px solid rgba(0, 71, 84, 0.1);
+      color: inherit;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    .report th {
+      background: var(--color-bn-light);
+      color: var(--color-bn-deep);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .report tr:nth-child(odd):not(:first-child) td {
+      background: rgba(246, 251, 250, 0.78);
+    }
+
+    .report tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .report td:nth-child(n+2),
+    .report th:nth-child(n+2) {
+      text-align: right;
+    }
+
+    .report p[style*="font-size:0.85rem"],
+    .report p[style*="font-size: 0.85rem"],
+    .report p:last-child:has(em) {
+      max-width: none;
+      margin-top: 2.5rem !important;
+      padding-top: 1rem;
+      border-top: 1px solid rgba(0, 71, 84, 0.16);
+      color: rgba(20, 39, 43, 0.58) !important;
+      font-size: 0.86rem !important;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 640px) {
+      .report {
+        width: min(100% - 1rem, 960px);
+        padding: 0.75rem 0 2rem;
+      }
+
+      .report-header,
+      .report-body {
+        padding-inline: 1.1rem;
+      }
+
+      .report-brand {
+        width: 118px;
+      }
+
+      .report th,
+      .report td {
+        padding: 0.72rem 0.85rem;
+      }
+    }
+
+    @media print {
+      :root {
+        color-scheme: light;
+      }
+
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      .gate-shell {
+        display: none;
+      }
+
+      .report,
+      .report.active {
+        display: block;
+        width: 100%;
+        max-width: none;
+        padding: 0;
+      }
+
+      .report-shell {
+        border: 0;
+        box-shadow: none;
+      }
+
+      .report-header,
+      .report-body {
+        padding: 0.5in 0;
+        background: #ffffff;
+      }
+
+      .report table {
+        box-shadow: none;
+        break-inside: avoid;
+      }
     }
   </style>
 </head>
@@ -237,14 +508,26 @@ m85 -184 c3 -28 1 -29 -37 -29 -39 0 -40 1 -37 33 1 18 9 50 18 70 l16 37 18
         </div>
       </div>
     </section>
-    <article class="report" id="report" aria-live="polite"></article>
+    <article class="report" id="report" aria-live="polite">
+      <div class="report-shell">
+        <div class="report-top-rule"></div>
+        <header class="report-header">
+          <div class="report-brand" id="report-brand" aria-hidden="true"></div>
+          <div class="report-title-block">
+            <p class="report-meta">Confidential Client Report</p>
+            <h1 class="report-title">Acme Roofing Co. — Quarterly SEO Report</h1>
+          </div>
+        </header>
+        <div class="report-body" id="report-body"></div>
+      </div>
+    </article>
   </main>
 
   <script>
     const REPORT_TITLE = "Acme Roofing Co. \u2014 Quarterly SEO Report";
-    const SALT_B64 = "bq93pcfX8P4N0qWQXb+mlw==";
-    const IV_B64 = "Qedf/WTWdWBoG9RH";
-    const CIPHERTEXT_B64 = "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";
+    const SALT_B64 = "FQWR6kHs6mXoXmipiv2dJA==";
+    const IV_B64 = "Qe1dKbA+xpVzyWZX";
+    const CIPHERTEXT_B64 = "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";
     const PBKDF2_ITERATIONS = 200000;
 
     const form = document.getElementById("unlock-form");
@@ -253,6 +536,9 @@ m85 -184 c3 -28 1 -29 -37 -29 -39 0 -40 1 -37 33 1 18 9 50 18 70 l16 37 18
     const error = document.getElementById("error");
     const gate = document.getElementById("gate");
     const report = document.getElementById("report");
+    const reportBody = document.getElementById("report-body");
+    const reportBrand = document.getElementById("report-brand");
+    const gateLogo = document.querySelector(".brand-logo");
 
     function b64ToBytes(value) {
       const binary = atob(value);
@@ -304,12 +590,13 @@ m85 -184 c3 -28 1 -29 -37 -29 -39 0 -40 1 -37 33 1 18 9 50 18 70 l16 37 18
         );
 
         const decoder = new TextDecoder();
-        report.innerHTML = decoder.decode(plaintext);
+        reportBody.innerHTML = decoder.decode(plaintext);
+        reportBrand.replaceChildren(gateLogo.cloneNode(true));
         document.title = REPORT_TITLE;
         gate.remove();
         report.classList.add("active");
       } catch {
-        report.innerHTML = "";
+        reportBody.innerHTML = "";
         error.textContent = "Incorrect password";
         passwordInput.select();
       } finally {
